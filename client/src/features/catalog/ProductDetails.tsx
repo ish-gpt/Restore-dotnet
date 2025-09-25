@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
-import type { Product } from "../../app/models/product";
 import { Button, Divider, Grid2, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from "@mui/material";
+import { useFetchProductDetailsQuery } from "./catalogApi";
 
 export default function ProductDetails() {
     const {id} = useParams();
-    const [product, setProduct] = useState<Product | null>(null);
 
-    const tableData = [
+    const {data: product, isLoading} = useFetchProductDetailsQuery(id ? +id : 0);
+
+     const tableData = [
         { label: 'Name', value: product?.name },
         { label: 'Description', value: product?.description },
         { label: 'Type', value: product?.type },
@@ -15,13 +15,7 @@ export default function ProductDetails() {
         { label: 'Quantity in Stock', value: product?.quantityInStock.toString() }
     ]
 
-    useEffect(() => {
-        fetch(`https://localhost:5001/api/products/${id}`)
-          .then(response => response.json())
-          .then((data) =>{ setProduct(data);})
-          .catch(error => console.error('Error fetching product details:', error));
-      }, []);
-      if(!product) return <h3>Loading...</h3>
+      if(!product || isLoading) return <h3>Loading...</h3>
   return (
     <Grid2 container spacing={6} maxWidth='lg' sx={{mx:'auto'}}>
         <Grid2 size={6}>

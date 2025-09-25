@@ -1,13 +1,11 @@
-import { AppBar, Badge, Box, IconButton, List, ListItem, Toolbar, Typography } from "@mui/material";
+import { AppBar, Badge, Box, IconButton, LinearProgress, List, ListItem, Toolbar, Typography } from "@mui/material";
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import { NavLink } from "react-router-dom";
 import { ShoppingCart } from "@mui/icons-material";
+import { useAppDispatch, useAppSelector } from "../store/store";
+import { setMode } from "./modeSlice";
 
-type Props = {
-    darkMode: boolean,
-    setDarkMode: (value: boolean) => void
-}
 
 const navStyles = {
     color: 'inherit',
@@ -17,7 +15,11 @@ const navStyles = {
     textDecoration: 'none'
 }
 
-export default function NavBar({ darkMode, setDarkMode }: Props) {
+export default function NavBar() {
+    const {isLoading} = useAppSelector(state=>state.ui);
+    const {mode} = useAppSelector(state=>state.mode);
+    const dispatch = useAppDispatch();
+
     const midLinks = [
         { title: 'catalog', path: '/catalog' },
         { title: 'about', path: '/about' },
@@ -29,6 +31,7 @@ export default function NavBar({ darkMode, setDarkMode }: Props) {
         { title: 'register', path: '/register' }
     ]
     return (
+        <>
         <AppBar position="fixed">
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -36,7 +39,7 @@ export default function NavBar({ darkMode, setDarkMode }: Props) {
                         RE-STORE
                     </Typography>
                     {
-                        darkMode ? <LightModeIcon onClick={() => setDarkMode(false)} sx={{ cursor: 'pointer', color: 'yellow' }}></LightModeIcon> : <DarkModeIcon onClick={() => setDarkMode(true)} sx={{ cursor: 'pointer' }}></DarkModeIcon>
+                        mode ===' light' ? <LightModeIcon onClick={()=>dispatch(setMode())} sx={{ cursor: 'pointer', color: 'yellow' }}></LightModeIcon> : <DarkModeIcon onClick={() => dispatch(setMode())} sx={{ cursor: 'pointer' }}></DarkModeIcon>
                     }
                 </Box>
                 <List sx={{
@@ -68,6 +71,12 @@ export default function NavBar({ darkMode, setDarkMode }: Props) {
                     </List>
                 </Box>
             </Toolbar>
+            {
+            isLoading && <Box sx={{ width: '100%' }}>
+                <LinearProgress color="secondary"></LinearProgress>
+            </Box>
+        }
         </AppBar>
+        </>
     )
 }
