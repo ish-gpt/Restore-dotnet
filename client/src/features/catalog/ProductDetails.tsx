@@ -1,11 +1,40 @@
 import { useParams } from "react-router-dom"
 import { Button, Divider, Grid2, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from "@mui/material";
 import { useFetchProductDetailsQuery } from "./catalogApi";
+import { useAddBasketItemMutation, useFetchBasketQuery, useRemoveBasketItemMutation } from "../basket/basketApi";
+import { useEffect, useState, type ChangeEvent } from "react";
 
 export default function ProductDetails() {
     const {id} = useParams();
+    const [addBasketItem] = useAddBasketItemMutation();
+    const [removeBasketItem] = useRemoveBasketItemMutation();
+    const {data:basket} = useFetchBasketQuery();
+    const item = basket?.items.find(x=>x.productId === +id!);
+
+    const [quantity, setQuantity] = useState(0);
+
+    useEffect(()=>{
+        if(item) setQuantity(item.quantity);
+    },[item])
 
     const {data: product, isLoading} = useFetchProductDetailsQuery(id ? +id : 0);
+
+    if(!product || isLoading) return <div>Loading....</div>
+
+    const handleUpdateBasket = () => {
+        const updatedQuantity = item ? Math.abs(item.quantity - quantity) : quantity;
+        if(!item || quantity > item.quantity) {
+            addBasketItem({product,quantity:updatedQuantity});
+        } else {
+            removeBasketItem({productId: product.id, quantity: updatedQuantity})
+        }
+    }
+
+
+    const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) =>{
+        if(+e.currentTarget.value >= 0)
+        setQuantity(+e.currentTarget.value);
+    }
 
      const tableData = [
         { label: 'Name', value: product?.name },
@@ -40,11 +69,11 @@ export default function ProductDetails() {
                 </Table>
             </TableContainer>
             <Grid2 spacing={2} marginTop={3} container>
-                <Grid2 size={6}>  
-                    <TextField label="Quantity" variant="outlined" type="number" fullWidth defaultValue={1}></TextField>
+                <Grid2 size={6}>
+                    <TextField onChange={handleQuantityChange} label="Quantity" variant="outlined" type="number" fullWidth value={quantity}></TextField>
                 </Grid2>
                 <Grid2 size={6}>
-                    <Button fullWidth sx={{height:'55px'}} color='primary' size='large' variant='contained'>Add to Cart</Button>
+                    <Button onClick={handleUpdateBasket} disabled={quantity === item?.quantity || !item && quantity===0} fullWidth sx={{height:'55px'}} color='primary' size='large' variant='contained'>Add to Cart</Button>
                 </Grid2>
             </Grid2>
         </Grid2>

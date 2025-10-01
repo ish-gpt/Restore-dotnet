@@ -1,10 +1,11 @@
 import { AppBar, Badge, Box, IconButton, LinearProgress, List, ListItem, Toolbar, Typography } from "@mui/material";
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { ShoppingCart } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { setMode } from "./modeSlice";
+import { useFetchBasketQuery } from "../../features/basket/basketApi";
 
 
 const navStyles = {
@@ -19,6 +20,9 @@ export default function NavBar() {
     const {isLoading} = useAppSelector(state=>state.ui);
     const {mode} = useAppSelector(state=>state.mode);
     const dispatch = useAppDispatch();
+    const {data: product} = useFetchBasketQuery();
+
+    const itemsCount = product?.items.reduce((sum,curr)=>sum+=curr.quantity,0) || 0;
 
     const midLinks = [
         { title: 'catalog', path: '/catalog' },
@@ -55,8 +59,8 @@ export default function NavBar() {
                     }
                 </List>
                 <Box  sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <IconButton sx={{ color: 'inherit' }}>
-                        <Badge badgeContent={4} color='secondary'>
+                    <IconButton component={Link} to='/basket' sx={{ color: 'inherit' }}>
+                        <Badge badgeContent={itemsCount} color='secondary'>
                             <ShoppingCart ></ShoppingCart>
                         </Badge>    
                     </IconButton>
