@@ -1,7 +1,7 @@
 import './App.css'
 import { Box, Container, createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import NavBar from './NavBar';
-import { Outlet } from 'react-router-dom';
+import { Outlet, ScrollRestoration } from 'react-router-dom';
 import { useAppSelector } from '../store/store';
 
 
@@ -16,10 +16,9 @@ function App() {
     }
   })
 
-  
-
   return (  
      <ThemeProvider theme={theme}>
+      <ScrollRestoration></ScrollRestoration>
       <NavBar></NavBar>
       <CssBaseline />
       <Box sx={{minHeight:'100vh', background: mode==='dark' ? '#121212' : '#eaeaea'}}>

@@ -4,6 +4,7 @@ import { uiSlice } from "../layout/uiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { mode } from "../layout/modeSlice";
 import { basketApi } from "../../features/basket/basketApi";
+import { catalogSlice } from "../../features/catalog/catalogSlice";
 
 export const store = configureStore({
     reducer:{
@@ -11,6 +12,7 @@ export const store = configureStore({
         [basketApi.reducerPath]: basketApi.reducer,
         ui: uiSlice.reducer,
         mode: mode.reducer,
+        catalog: catalogSlice.reducer
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(
         catalogApi.middleware,
