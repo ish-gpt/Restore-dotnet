@@ -6,6 +6,8 @@ import { ShoppingCart } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { setMode } from "./modeSlice";
 import { useFetchBasketQuery } from "../../features/basket/basketApi";
+import UserMenu from "./UserMenu";
+import { useUserInfoQuery } from "../../features/acccount/accountApi";
 
 
 const navStyles = {
@@ -17,6 +19,7 @@ const navStyles = {
 }
 
 export default function NavBar() {
+    const { data: user } = useUserInfoQuery();
     const {isLoading} = useAppSelector(state=>state.ui);
     const {mode} = useAppSelector(state=>state.mode);
     const dispatch = useAppDispatch();
@@ -64,7 +67,11 @@ export default function NavBar() {
                             <ShoppingCart ></ShoppingCart>
                         </Badge>    
                     </IconButton>
-                    <List sx={{ display: 'flex', flexDirection: 'row' }}>
+                    {
+                        user ? (
+                            <UserMenu user={user}></UserMenu>
+                        ) : (
+                            <List sx={{ display: 'flex', flexDirection: 'row' }}>
                         {
                             rightLinks.map(({ title, path }) => (
                                 <ListItem component={NavLink} to={path} sx={navStyles}>
@@ -73,6 +80,8 @@ export default function NavBar() {
                             ))
                         }
                     </List>
+                        )
+                    }
                 </Box>
             </Toolbar>
             {
