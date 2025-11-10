@@ -6,12 +6,14 @@ import { mode } from "../layout/modeSlice";
 import { basketApi } from "../../features/basket/basketApi";
 import { catalogSlice } from "../../features/catalog/catalogSlice";
 import { accountApi } from "../../features/acccount/accountApi";
+import { checkoutApi } from "../../features/checkout/checkoutApi";
 
 export const store = configureStore({
     reducer:{
         [catalogApi.reducerPath]: catalogApi.reducer,
         [basketApi.reducerPath]: basketApi.reducer,
         [accountApi.reducerPath]: accountApi.reducer,
+        [checkoutApi.reducerPath]: checkoutApi.reducer,
         ui: uiSlice.reducer,
         mode: mode.reducer,
         catalog: catalogSlice.reducer
@@ -19,7 +21,8 @@ export const store = configureStore({
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(
         catalogApi.middleware,
         basketApi.middleware,
-        accountApi.middleware
+        accountApi.middleware,
+        checkoutApi.middleware
     )
 });
 
